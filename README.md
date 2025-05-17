@@ -141,22 +141,22 @@ sudo apt install python3-colcon-common-extensions
 
 ```Bash
 mkdir -p ~/ros_ws/src
-cd ~/ros_ws/src
 ```
 ---
-
-### 3. clone the git-repo inside ros_ws
-```Bash
-git clone https://github.com/AkshaiKrishna-1096/Ros_Note.git
-```
----
-
-### 4. Build the workspace
+### 3. Build the workspace
 ```Bash
 cd ~/ros_ws
 colcon build
 ```
 ---
+
+### 4. clone the git-repo inside src
+```Bash
+cd ~/ros_ws/src
+git clone https://github.com/AkshaiKrishna-1096/Ros_Note.git
+```
+---
+
 
 ### 5. now source the Workspace overlay 
 ```Bash
