@@ -7,28 +7,37 @@
 
 class SquaredPublisherNode : public rclcpp::Node
 {
+    //define the method variable in the class
     rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr subscription_;
     rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr publisher_;
 
 public:
+    //name this node
     SquaredPublisherNode() : Node("squared_numbers")
     {
+	// initate subscriber which take a Int32 msg type and callback square_callback()
         subscription_ = this->create_subscription<std_msgs::msg::Int32>("number", 10, std::bind(&SquaredPublisherNode::square_callback, this, std::placeholders::_1));
-        publisher_ = this->create_publisher<std_msgs::msg::Int32>("output", 10);
+        //initiate a publisher which publish Int32 msg
+	publisher_ = this->create_publisher<std_msgs::msg::Int32>("output", 10);
     }
 
 
 private:
+    // take the data from topic 'number' and put into msg
     void square_callback(const std_msgs::msg::Int32 & msg)
     {
+	// define a square variable with Int32 properties
+	// and find the square of the value
         auto square = std_msgs::msg::Int32();
         square.data = msg.data * msg.data;
+	//print the value into teh terminal
         RCLCPP_INFO(this->get_logger(), "Square of %d : %d ", msg.data, square.data);
-        publisher_->publish(square);
+        //publish the squared value ( can be taken by anyother node )
+	publisher_->publish(square);
     }
 };
 
-
+//MAIN FUNCTION
 int main(int argc, char* argv[])
 {
     rclcpp::init(argc, argv);
