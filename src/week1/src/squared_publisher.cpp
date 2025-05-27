@@ -15,10 +15,15 @@ public:
     //name this node
     SquaredPublisherNode() : Node("squared_numbers")
     {
-	// initate subscriber which take a Int32 msg type and callback square_callback()
-        subscription_ = this->create_subscription<std_msgs::msg::Int32>("number", 10, std::bind(&SquaredPublisherNode::square_callback, this, std::placeholders::_1));
+        // define compatibile Qos for as the `number_publisher` node.
+        rclcpp::QoS qos_profile(10);
+        qos_profile.reliable();
+        qos_profile.durability_volatile();
+
+	    // initate subscriber which take a Int32 msg type and callback square_callback()
+        subscription_ = this->create_subscription<std_msgs::msg::Int32>("number", qos_profile, std::bind(&SquaredPublisherNode::square_callback, this, std::placeholders::_1));
         //initiate a publisher which publish Int32 msg
-	publisher_ = this->create_publisher<std_msgs::msg::Int32>("output", 10);
+	publisher_ = this->create_publisher<std_msgs::msg::Int32>("output", qos_profile);
     }
 
 

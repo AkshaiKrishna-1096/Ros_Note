@@ -18,8 +18,13 @@ public:
     // this line will name the node
     NumberPublisherNode() : Node("number_publisher")
     {   
+        // setting up QoS profile of the node
+        rclcpp::QoS qos_profile(10);        // Depth : keep last 10 msg.
+        qos_profile.reliable();             // Ensure all the msg are sent.
+        qos_profile.durability_volatile();  // Do not persist msg.
+
         /* this create a publisher that pubish to the topic 'number' and data type Int32. also allocated queue size of 10 for buffer*/
-        publisher_ = this->create_publisher<std_msgs::msg::Int32>("number", 10);
+        publisher_ = this->create_publisher<std_msgs::msg::Int32>("number", qos_profile);
         /* set a timer that call timer_callback() every 500ms. this will also bind the member function to this object instance*/
         timer_ = this->create_wall_timer(std::chrono::milliseconds(500), std::bind(&NumberPublisherNode::timer_callback, this));
     }
