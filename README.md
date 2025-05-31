@@ -59,6 +59,64 @@ These features are essential for making **highly capable Robot**.
 
 ---
 
-
 ## ROS Launch file and QoS
 ---
+
+The next task is to make a launch file into the workspace and add QoS into node.
+
+### 🚀 Launch File
+
+The **ROS 2 Launch system** configures the system to specify:
+- What programs to run
+- Where to run them
+- What arguments to pass
+- ROS-specific conventions for reusability (like remapping topics or namespaces)
+
+For more information, refer to the official [ROS 2 Humble Launch File documentation](https://docs.ros.org/en/humble/Tutorials/Intermediate/Launch/Creating-Launch-Files.html).
+
+**▶️ How to Run the Launch File**
+
+Make sure you have:
+1. Cloned the repository
+2. Built the workspace using `colcon build`
+3. Sourced the environment
+
+Then, run:
+
+```bash
+ros2 launch launch_week1 mars.launch.py
+```
+
+> **NOTE**
+> I have made the launch file in python for my ease. We can make it in XML and YAML also.
+
+---
+### 📡 QoS (Quality of Service) in ROS 2
+---
+QoS allow us to tune the communication between the ROS2. It can be reliable as TCP and best-effort as UDP depending on the QoS profile we set.\
+
+**⚙️ Common QoS Policies**
+
+- **History** – `Keep last` or `Keep all` messages
+- **Depth** – Size of the message queue
+- **Reliability** – `RELIABLE` or `BEST_EFFORT`
+- **Durability** – `TRANSIENT_LOCAL` or `VOLATILE`
+- **Deadline** – Expected interval between messages
+- **Lifespan** – Duration a message remains valid
+- **Liveliness** – `AUTOMATIC` or `MANUAL_BY_TOPIC`
+- **Lease Duration** – Time within which liveliness must be asserted
+
+*The QoS also ensure that the connection between the nodes are only made if they have compatible QoS profile.*\
+For more information visit [Quality of Services](https://docs.ros.org/en/humble/Tutorials/Intermediate/Launch/Creating-Launch-Files.html)
+
+**QoS profile**, i have used for the node is Reliable, volatile and queuesize of 10. because as i know the node is internally controlled and not sensor-based for now.
+```C
+    // setting up QoS profile of the node
+    rclcpp::QoS qos_profile(10);        // Depth : keep last 10 msg.
+    qos_profile.reliable();             // Ensure all the msg are sent.
+    qos_profile.durability_volatile();  // Do not persist msg.
+```
+
+---
+> **NOTE**
+> For the info about the previous task, checkout the task_log directory.
