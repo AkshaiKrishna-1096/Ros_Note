@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="simple_box_robo" >
+
+  <!-- All file included -->
+
+  <xacro:include filename="properties.urdf.xacro" />
+
+  <!-- Standing pole Structrue and Joint -->
+
+  <link name="rod">
+    <visual>
+      <geometry>
+        <box size="${rod_x} ${rod_y} ${rod_z}" />
+      </geometry>
+      <material name="white" />
+    </visual>
+
+    <collision>
+      <geometry>
+        <box size="${rod_x} ${rod_y} ${rod_z}" />
+      </geometry>
+    </collision>
+
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="${rod_mass}" />
+      <inertia
+        ixx="${(1/12.0) * rod_mass * (rod_y*rod_y + rod_z*rod_z)}"
+        ixy="0.0" 
+        ixz="0.0" 
+        iyy="${(1/12.0) * rod_mass * (rod_x*rod_x + rod_z*rod_z)}"
+        iyz="0.0"
+        izz="${(1/12.0) * rod_mass * (rod_x*rod_x + rod_y*rod_y)}" 
+      />
+    </inertial>
+
+  </link>
+
+  <joint name="body_to_rod" type="prismatic">
+    <parent link="base_link" />
+    <child link="rod" />
+    <origin xyz="${body_x/2 - lidar_x} 0 ${body_z + wheel_radius}" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="${body_z + wheel_radius}" upper="${body_z + wheel_radius + rod_z/2}" effort="10.0" velocity="1.0" />
+  </joint>
+
+  <!-- Lidar Main Body -->
+
+  <link name="lidar_body">
+    <visual>
+      <geometry>
+        <box size="${lidar_x} ${lidar_y} ${lidar_z}" />
+      </geometry>
+      <material name="red" />
+    </visual>
+
+    <collision>
+      <geometry>
+        <box size="${lidar_x} ${lidar_y} ${lidar_z}" />
+      </geometry>
+    </collision>
+
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="${sensor_mass}"/>
+      <inertia 
+        ixx="${(1/12)*sensor_mass*(lidar_y*lidar_y + lidar_z*lidar_z)}" 
+        ixy="0" 
+        ixz="0" 
+        iyy="${(1/12)*sensor_mass*(lidar_x*lidar_x + lidar_z*lidar_z)}"  
+        iyz="0" 
+        izz="${(1/12)*sensor_mass*(lidar_x*lidar_x + lidar_y*lidar_y)}"
+      />
+    </inertial>
+
+  </link>
+
+  <joint name="rod_to_lidar" type="revolute">
+    <parent link="rod" />
+    <child link="lidar_body" />
+    <origin xyz="0 0 ${rod_z/2 - lidar_z/4}" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="${-3*PI/4}" upper="${3*PI/4}" effort="10.0" velocity="1.0" />
+  </joint>
+
+</robot>

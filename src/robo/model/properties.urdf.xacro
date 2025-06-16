@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="simple_box_robo" >
+  
+    <!-- Dimension of the body -->
+
+  <xacro:property name="body_x" value="1" />
+  <xacro:property name="body_y" value="0.6" />
+  <xacro:property name="body_z" value="0.4" />
+
+  <!-- Dimension of the Wheel -->
+
+  <xacro:property name="wheel_len" value="0.03" />
+  <xacro:property name="wheel_radius" value="0.125" />
+  <xacro:property name="wheel_z" value="${wheel_radius}" />
+
+  <!-- Dimension of the Standing Rod -->
+
+  <xacro:property name="rod_x" value="0.05" />
+  <xacro:property name="rod_y" value="0.05" />
+  <xacro:property name="rod_z" value="0.3" />
+
+  <!-- Dimension of the Lidar Body -->
+
+  <xacro:property name="lidar_x" value="0.1" />
+  <xacro:property name="lidar_y" value="0.3" />
+  <xacro:property name="lidar_z" value="0.15" />
+
+  <!-- PI constant -->
+
+  <xacro:property name="PI" value="3.141592" />
+  
+  <!-- Material Color -->
+
+  <material name="red">
+    <color rgba="1 0 0 1" />
+  </material>
+
+  <material name="black">
+    <color rgba="0 0 0 1" />
+  </material>
+
+  <material name="white">
+    <color rgba="1 1 1 1" />
+  </material>
+
+  <material name="almost_blue">
+    <color rgba="0.1 0 1 1" />
+  </material>
+
+  <material name="almost_green">
+    <color rgba="0.2 0.3 0.2 1" />
+  </material>
+
+  <!-- Material Density of the parts -->
+
+  <xacro:property name="body_density" value="2710.0" />
+  <xacro:property name="wheel_density" value="2710.0" />
+  <xacro:property name="sensor_density" value="2710" />
+  <xacro:property name="rod_density" value="2710.0" />
+
+  <!-- Material mass of the parts -->
+
+  <xacro:property name="body_mass" value="${body_density*body_x*body_y*body_z}" />
+  <xacro:property name="wheel_mass" value="${wheel_density*(PI*wheel_radius*wheel_radius*wheel_len)}" />
+  <xacro:property name="sensor_mass" value="${sensor_density*lidar_x*lidar_y*lidar_z}" />
+  <xacro:property name="rod_mass" value="${rod_density * rod_x * rod_y * rod_z}" />
+
+  <!-- Moment of inertia of the wheels -->
+
+  <xacro:property name="Iz_wheel" value="${0.5*wheel_mass*wheel_radius*wheel_radius}" />
+  <xacro:property name="I_wheel" value="${(1.0/12.0)*wheel_mass*(3*wheel_radius*wheel_radius+wheel_len*wheel_len)}" />
+
+  <xacro:macro name="inertia_wheel">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="${wheel_mass}"/>
+      <inertia ixx="${I_wheel}" ixy="0.0" ixz="0.0" iyy="${I_wheel}" iyz="0" izz="${Iz_wheel}"/>
+
+    </inertial>
+  </xacro:macro>
+  
+  <!-- <xacro:include filename="$(find robo)/model/robot.gazebo"/> -->
+
+  <!-- Defining DUMMY joint and link -->
+
+  <link name="dummy">
+  </link>
+  <joint name="dummy_joint" type="fixed">
+    <parent link="dummy"/>
+    <child link="base_link"/>
+  </joint>
+
+
+</robot>
