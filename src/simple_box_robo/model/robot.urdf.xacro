@@ -24,7 +24,6 @@
 
   <!-- PI constant -->
   <xacro:property name="PI" value="3.141592" />
-  <xacro:property name="pi" value="${PI}" /> <!-- Alias for compatibility -->
   
   <!-- Material Color -->
   <material name="red">
@@ -71,6 +70,17 @@
     </inertial>
   </xacro:macro>
 
+  <!-- Add this at the top of your URDF, before base_link -->
+  <link name="dummy">
+  </link>
+
+  <joint name="dummy_joint" type="fixed">
+    <parent link="dummy"/>
+    <child link="base_link"/>
+  </joint>
+
+<!-- Keep your existing base_link and other elements -->
+
   <!-- ========== MAIN BODY ========== -->
   <link name="base_link">
     <visual>
@@ -110,14 +120,14 @@
         <cylinder length="${wheel_len}" radius="${wheel_radius}" />
       </geometry>
       <material name="almost_blue" />
-      <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+      <origin xyz="0 0 0" rpy="${PI/2} 0 0" />
     </visual>
 
     <collision>
       <geometry>
         <cylinder length="${wheel_len}" radius="${wheel_radius}" />
       </geometry>
-      <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+      <origin xyz="0 0 0" rpy="${PI/2} 0 0" />
     </collision>
 
     <xacro:inertia_wheel />
@@ -137,14 +147,14 @@
         <cylinder length="${wheel_len}" radius="${wheel_radius}" />
       </geometry>
       <material name="almost_blue" />
-      <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+      <origin xyz="0 0 0" rpy="${PI/2} 0 0" />
     </visual>
 
     <collision>
       <geometry>
         <cylinder length="${wheel_len}" radius="${wheel_radius}" />
       </geometry>
-      <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+      <origin xyz="0 0 0" rpy="${PI/2} 0 0" />
     </collision>
 
     <xacro:inertia_wheel />
@@ -164,14 +174,14 @@
         <cylinder length="${wheel_len}" radius="${wheel_radius}" />
       </geometry>
       <material name="almost_blue" />
-      <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+      <origin xyz="0 0 0" rpy="${PI/2} 0 0" />
     </visual>
 
     <collision>
       <geometry>
         <cylinder length="${wheel_len}" radius="${wheel_radius}" />
       </geometry>
-      <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+      <origin xyz="0 0 0" rpy="${PI/2} 0 0" />
     </collision>
 
     <xacro:inertia_wheel />
@@ -191,14 +201,14 @@
         <cylinder length="${wheel_len}" radius="${wheel_radius}" />
       </geometry>
       <material name="almost_blue" />
-      <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+      <origin xyz="0 0 0" rpy="${PI/2} 0 0" />
     </visual>
 
     <collision>
       <geometry>
         <cylinder length="${wheel_len}" radius="${wheel_radius}" />
       </geometry>
-      <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+      <origin xyz="0 0 0" rpy="${PI/2} 0 0" />
     </collision>
 
     <xacro:inertia_wheel />
