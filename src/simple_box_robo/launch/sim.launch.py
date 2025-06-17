@@ -49,16 +49,44 @@ def generate_launch_description():
 
         # Bridge ROS topics to Gazebo
         Node(
-            package='ros_gz_bridge',  # Changed from 'ros_gz_bridge' to 'ros_ign_bridge' for Fortress
+            package='ros_gz_bridge',
             executable='parameter_bridge',
             arguments=[
-                '/cmd_vel@geometry_msgs/msg/Twist@ignition.msgs.Twist',  # Changed 'gz.msgs' to 'ignition.msgs'
-                '/odom@nav_msgs/msg/Odometry@ignition.msgs.Odometry',
-                '/scan@sensor_msgs/msg/LaserScan@ignition.msgs.LaserScan',
-                '/camera/image@sensor_msgs/msg/Image@ignition.msgs.Image',
-                # You might also want to add TF bridge if needed
-                '/tf@tf2_msgs/msg/TFMessage@ignition.msgs.Pose_V'
+                '/cmd_vel@geometry_msgs/msg/Twist@gz.msgs.Twist',
+                '/model/simple_box_robo/cmd_vel@geometry_msgs/msg/Twist@gz.msgs.Twist',
+                '/odom@nav_msgs/msg/Odometry@gz.msgs.Odometry',
+                '/scan@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
+                '/camera/image@sensor_msgs/msg/Image@gz.msgs.Image',
+                '/tf@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V'
             ],
-            output='screen'
+            output='screen',
+            remappings=[
+                ('/cmd_vel', '/model/simple_box_robo/cmd_vel')
+            ],
+            parameters=[{
+                'qos_overrides./cmd_vel.publisher.reliability': 'reliable',
+                'qos_overrides./model/simple_box_robo/cmd_vel.subscription.reliability': 'reliable'
+            }]
         ),
+
+        # Teleop Keyboard Node
+        Node(
+            package='teleop_twist_keyboard',
+            executable='teleop_twist_keyboard',
+            name='teleop_keyboard',
+            output='screen',
+            prefix='xterm -e',
+            emulate_tty=True,
+            remappings=[
+                ('/cmd_vel', '/model/simple_box_robo/cmd_vel')  # Direct remapping
+            ]
+        ),
+
+        Node(
+            package="controller_manager",
+            executable="spawner",
+            arguments=["diff_cont"],
+            output="screen",
+        )
+
     ])

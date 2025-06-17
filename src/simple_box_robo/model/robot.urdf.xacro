@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="simple_box_bot">
+  <!-- Add ROS 2 Control Import -->
+  <xacro:include filename="ros2_control.urdf.xacro" />
 
   <!-- ========== PROPERTIES ========== -->
   <!-- Dimension of the body -->
@@ -69,6 +71,9 @@
       <inertia ixx="${I_wheel}" ixy="0.0" ixz="0.0" iyy="${I_wheel}" iyz="0" izz="${Iz_wheel}"/>
     </inertial>
   </xacro:macro>
+
+  <!-- ROS 2 Control Configuration (replace existing block) -->
+  <xacro:ros2_control name="diff_drive_controller" prefix="" />
 
   <!-- Add this at the top of your URDF, before base_link -->
   <link name="dummy">

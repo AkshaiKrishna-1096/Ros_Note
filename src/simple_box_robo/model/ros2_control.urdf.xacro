@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:macro name="ros2_control" params="name prefix">
+    <ros2_control name="${name}" type="system">
+      <hardware>
+        <plugin>gz_ros2_control/GazeboSystem</plugin>
+      </hardware>
+      <joint name="body_to_lf_wheel">
+        <command_interface name="velocity"/>
+      </joint>
+      <joint name="body_to_lb_wheel">
+        <command_interface name="velocity"/>
+      </joint>
+      <joint name="body_to_rf_wheel">
+        <command_interface name="velocity"/>
+      </joint>
+      <joint name="body_to_rb_wheel">
+        <command_interface name="velocity"/>
+      </joint>
+    </ros2_control>
+  </xacro:macro>
+
+</robot>
