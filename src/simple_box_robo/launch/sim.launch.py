@@ -15,6 +15,12 @@ def generate_launch_description():
     # Generate URDF from xacro
     robot_description = Command([FindExecutable(name='xacro'), ' ', urdf_file])
 
+    controller_config = os.path.join(
+        get_package_share_directory('simple_box_robo'),
+        'config',
+        'controllers.yaml'
+    )
+
     return LaunchDescription([
         # Launch Gazebo Fortress with the specified world
         ExecuteProcess(
@@ -82,11 +88,33 @@ def generate_launch_description():
             ]
         ),
 
+        # Add these nodes to your LaunchDescription
         Node(
-            package="controller_manager",
-            executable="spawner",
-            arguments=["diff_cont"],
-            output="screen",
+            package='controller_manager',
+            executable='ros2_control_node',
+            parameters=[{'robot_description': robot_description}, controller_config],
+            output='screen',
+        ),
+
+        Node(
+            package='controller_manager',
+            executable='spawner',
+            arguments=['joint_state_broadcaster'],
+            output='screen',
+        ),
+
+        Node(
+            package='controller_manager',
+            executable='spawner',
+            arguments=['diff_cont'],
+            output='screen',
+        ),
+
+        Node(
+            package='simple_box_robo',
+            executable='obstacle_avoidance_node.py',
+            name='obstacle_avoidance_node',
+            output='screen',
         )
 
     ])

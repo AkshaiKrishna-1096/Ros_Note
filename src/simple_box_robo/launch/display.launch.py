@@ -17,7 +17,7 @@ def generate_launch_description():
     # RViz config file
     rviz_config = os.path.join(
         get_package_share_directory('simple_box_robo'),  # Replace with your package name
-        'rviz',
+        'config',
         'config.rviz'
     )
 

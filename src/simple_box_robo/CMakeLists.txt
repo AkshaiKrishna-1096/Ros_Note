@@ -8,19 +8,23 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclpy REQUIRED)
+# Add after find_package(rclpy REQUIRED)
+find_package(ros2_control REQUIRED)
+find_package(ros2_controllers REQUIRED)
+find_package(gz_ros2_control REQUIRED)
 
 install(DIRECTORY 
   launch 
   worlds 
   model
-  rviz
+  config
   DESTINATION share/${PROJECT_NAME}
 )
 
 # Install Python nodes
 install(PROGRAMS
   src/obstacle_avoidance_node.py
-  DESTINATION lib/${PROJECT_NAME}
+  DESTINATION libexec/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)
