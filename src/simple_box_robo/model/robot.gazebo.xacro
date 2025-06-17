@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="simple_box_bot_gazebo">
+
+  <!-- ========== GAZEBO EXTENSIONS ========== -->
+  <!-- Gazebo plugin for ROS 2 Humble -->
+  <gazebo>
+    <plugin filename="libgazebo_ros_diff_drive.so" name="differential_drive_controller">
+      <ros>
+        <namespace>/</namespace>
+        <remapping>cmd_vel:=cmd_vel</remapping>
+      </ros>
+      <left_joint>body_to_lf_wheel</left_joint>
+      <left_joint>body_to_lb_wheel</left_joint>
+      <right_joint>body_to_rf_wheel</right_joint>
+      <right_joint>body_to_rb_wheel</right_joint>
+      <wheel_separation>${body_y - 2*wheel_len}</wheel_separation>
+      <wheel_diameter>${2*wheel_radius}</wheel_diameter>
+      <max_wheel_torque>20</max_wheel_torque>
+      <max_wheel_acceleration>1.0</max_wheel_acceleration>
+      <command_topic>cmd_vel</command_topic>
+      <odometry_topic>odom</odometry_topic>
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_link</robot_base_frame>
+      <publish_odom>true</publish_odom>
+      <publish_odom_tf>true</publish_odom_tf>
+      <publish_wheel_tf>false</publish_wheel_tf>
+    </plugin>
+  </gazebo>
+
+  <!-- Gazebo plugin for the lidar -->
+  <gazebo reference="lidar_body">
+    <sensor type="ray" name="lidar_sensor">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>false</visualize>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <resolution>1</resolution>
+            <min_angle>0</min_angle>
+            <max_angle>6.28319</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.10</min>
+          <max>10.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin filename="libgazebo_ros_ray_sensor.so" name="lidar_controller">
+        <ros>
+          <namespace>/</namespace>
+          <remapping>scan:=scan</remapping>
+        </ros>
+        <frame_name>lidar_body</frame_name>
+        <topic_name>scan</topic_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- Camera sensor -->
+  <gazebo reference="camera_link">
+    <sensor type="camera" name="camera_sensor">
+      <pose>0 0 0 0 0 0</pose>
+      <camera name="camera">
+        <horizontal_fov>1.0472</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.1</near>
+          <far>100</far>
+        </clip>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.007</stddev>
+        </noise>
+      </camera>
+      <plugin filename="libgazebo_ros_camera.so" name="camera_controller">
+        <ros>
+          <namespace>/</namespace>
+          <remapping>image_raw:=camera/image_raw</remapping>
+          <remapping>camera_info:=camera/camera_info</remapping>
+        </ros>
+        <camera_name>camera</camera_name>
+        <frame_name>camera_link</frame_name>
+        <hack_baseline>0.07</hack_baseline>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- Gazebo material for links -->
+  <gazebo reference="base_link">
+    <material>Gazebo/Green</material>
+  </gazebo>
+  
+  <gazebo reference="rod">
+    <material>Gazebo/White</material>
+  </gazebo>
+  
+  <gazebo reference="lidar_body">
+    <material>Gazebo/Red</material>
+  </gazebo>
+  
+  <gazebo reference="rf_wheel">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+  
+  <gazebo reference="rb_wheel">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+  
+  <gazebo reference="lf_wheel">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+  
+  <gazebo reference="lb_wheel">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
+</robot>

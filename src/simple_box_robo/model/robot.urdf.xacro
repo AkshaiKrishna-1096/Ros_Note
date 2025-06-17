@@ -1,0 +1,317 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="simple_box_bot">
+
+  <!-- ========== PROPERTIES ========== -->
+  <!-- Dimension of the body -->
+  <xacro:property name="body_x" value="1" />
+  <xacro:property name="body_y" value="0.6" />
+  <xacro:property name="body_z" value="0.4" />
+
+  <!-- Dimension of the Wheel -->
+  <xacro:property name="wheel_len" value="0.03" />
+  <xacro:property name="wheel_radius" value="0.125" />
+  <xacro:property name="wheel_z" value="${wheel_radius}" />
+
+  <!-- Dimension of the Standing Rod -->
+  <xacro:property name="rod_x" value="0.05" />
+  <xacro:property name="rod_y" value="0.05" />
+  <xacro:property name="rod_z" value="0.3" />
+
+  <!-- Dimension of the Lidar Body -->
+  <xacro:property name="lidar_x" value="0.1" />
+  <xacro:property name="lidar_y" value="0.3" />
+  <xacro:property name="lidar_z" value="0.15" />
+
+  <!-- PI constant -->
+  <xacro:property name="PI" value="3.141592" />
+  <xacro:property name="pi" value="${PI}" /> <!-- Alias for compatibility -->
+  
+  <!-- Material Color -->
+  <material name="red">
+    <color rgba="1 0 0 1" />
+  </material>
+
+  <material name="black">
+    <color rgba="0 0 0 1" />
+  </material>
+
+  <material name="white">
+    <color rgba="1 1 1 1" />
+  </material>
+
+  <material name="almost_blue">
+    <color rgba="0.1 0 1 1" />
+  </material>
+
+  <material name="almost_green">
+    <color rgba="0.2 0.3 0.2 1" />
+  </material>
+
+  <!-- Material Density of the parts -->
+  <xacro:property name="body_density" value="2710.0" />
+  <xacro:property name="wheel_density" value="2710.0" />
+  <xacro:property name="sensor_density" value="2710" />
+  <xacro:property name="rod_density" value="2710.0" />
+
+  <!-- Material mass of the parts -->
+  <xacro:property name="body_mass" value="${body_density*body_x*body_y*body_z}" />
+  <xacro:property name="wheel_mass" value="${wheel_density*(PI*wheel_radius*wheel_radius*wheel_len)}" />
+  <xacro:property name="sensor_mass" value="${sensor_density*lidar_x*lidar_y*lidar_z}" />
+  <xacro:property name="rod_mass" value="${rod_density * rod_x * rod_y * rod_z}" />
+
+  <!-- Moment of inertia of the wheels -->
+  <xacro:property name="Iz_wheel" value="${0.5*wheel_mass*wheel_radius*wheel_radius}" />
+  <xacro:property name="I_wheel" value="${(1.0/12.0)*wheel_mass*(3*wheel_radius*wheel_radius+wheel_len*wheel_len)}" />
+
+  <xacro:macro name="inertia_wheel">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="${wheel_mass}"/>
+      <inertia ixx="${I_wheel}" ixy="0.0" ixz="0.0" iyy="${I_wheel}" iyz="0" izz="${Iz_wheel}"/>
+    </inertial>
+  </xacro:macro>
+
+  <!-- ========== MAIN BODY ========== -->
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="${body_x} ${body_y} ${body_z}" />
+      </geometry>
+      <material name="almost_green" />
+      <origin xyz="0 0 ${body_z / 2 + wheel_radius }" rpy="0 0 0" />
+    </visual>
+    
+    <collision>
+      <geometry>
+        <box size="${body_x} ${body_y} ${body_z}" />
+      </geometry>
+      <origin xyz="0 0 ${body_z / 2 + wheel_radius }" rpy="0 0 0" />
+    </collision>
+
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="${body_mass}"/>
+      <inertia
+        ixx="${(1/12)*body_mass*(body_y*body_y + body_z*body_z)}"
+        ixy="0"
+        ixz="0"
+        iyy="${(1/12)*body_mass*(body_x*body_x+body_z*body_z)}"
+        iyz="0"
+        izz="${(1/12)*body_mass*(body_y*body_y+body_x*body_x)}"
+      />
+    </inertial>
+  </link>
+
+  <!-- ========== WHEELS ========== -->
+  <!-- Right Front wheel -->
+  <link name="rf_wheel">
+    <visual>
+      <geometry>
+        <cylinder length="${wheel_len}" radius="${wheel_radius}" />
+      </geometry>
+      <material name="almost_blue" />
+      <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+    </visual>
+
+    <collision>
+      <geometry>
+        <cylinder length="${wheel_len}" radius="${wheel_radius}" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+    </collision>
+
+    <xacro:inertia_wheel />
+  </link>
+
+  <joint name="body_to_rf_wheel" type="continuous">
+    <parent link="base_link" />
+    <child link="rf_wheel" />
+    <origin xyz="${body_x/2 - 1.2*wheel_radius} ${-body_y/2 + wheel_len} ${wheel_z}" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+  </joint>
+
+  <!-- Right Back Wheel -->
+  <link name="rb_wheel">
+    <visual>
+      <geometry>
+        <cylinder length="${wheel_len}" radius="${wheel_radius}" />
+      </geometry>
+      <material name="almost_blue" />
+      <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+    </visual>
+
+    <collision>
+      <geometry>
+        <cylinder length="${wheel_len}" radius="${wheel_radius}" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+    </collision>
+
+    <xacro:inertia_wheel />
+  </link>
+
+  <joint name="body_to_rb_wheel" type="continuous">
+    <parent link="base_link" />
+    <child link="rb_wheel" />
+    <origin xyz="${-body_x/2 + 1.2*wheel_radius} ${-body_y/2 + wheel_len} ${wheel_z}" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+  </joint>
+
+  <!-- Left Front Wheel -->
+  <link name="lf_wheel">
+    <visual>
+      <geometry>
+        <cylinder length="${wheel_len}" radius="${wheel_radius}" />
+      </geometry>
+      <material name="almost_blue" />
+      <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+    </visual>
+
+    <collision>
+      <geometry>
+        <cylinder length="${wheel_len}" radius="${wheel_radius}" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+    </collision>
+
+    <xacro:inertia_wheel />
+  </link>
+
+  <joint name="body_to_lf_wheel" type="continuous">
+    <parent link="base_link" />
+    <child link="lf_wheel" />
+    <origin xyz="${body_x/2 - 1.2*wheel_radius} ${body_y/2 - wheel_len} ${wheel_z}" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+  </joint>
+
+  <!-- Left Back Wheel -->
+  <link name="lb_wheel">
+    <visual>
+      <geometry>
+        <cylinder length="${wheel_len}" radius="${wheel_radius}" />
+      </geometry>
+      <material name="almost_blue" />
+      <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+    </visual>
+
+    <collision>
+      <geometry>
+        <cylinder length="${wheel_len}" radius="${wheel_radius}" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+    </collision>
+
+    <xacro:inertia_wheel />
+  </link>
+
+  <joint name="body_to_lb_wheel" type="continuous">
+    <parent link="base_link" />
+    <child link="lb_wheel" />
+    <origin xyz="${-body_x/2 + 1.2*wheel_radius} ${body_y/2 - wheel_len} ${wheel_z}" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+  </joint>
+
+  <!-- ========== LIDAR STRUCTURE ========== -->
+  <!-- Standing pole Structure and Joint -->
+  <link name="rod">
+    <visual>
+      <geometry>
+        <box size="${rod_x} ${rod_y} ${rod_z}" />
+      </geometry>
+      <material name="white" />
+    </visual>
+
+    <collision>
+      <geometry>
+        <box size="${rod_x} ${rod_y} ${rod_z}" />
+      </geometry>
+    </collision>
+
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="${rod_mass}" />
+      <inertia
+        ixx="${(1/12.0) * rod_mass * (rod_y*rod_y + rod_z*rod_z)}"
+        ixy="0.0" 
+        ixz="0.0" 
+        iyy="${(1/12.0) * rod_mass * (rod_x*rod_x + rod_z*rod_z)}"
+        iyz="0.0"
+        izz="${(1/12.0) * rod_mass * (rod_x*rod_x + rod_y*rod_y)}" 
+      />
+    </inertial>
+  </link>
+
+  <joint name="body_to_rod" type="prismatic">
+    <parent link="base_link" />
+    <child link="rod" />
+    <origin xyz="${body_x/2 - lidar_x} 0 ${body_z + wheel_radius}" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="${body_z + wheel_radius}" upper="${body_z + wheel_radius + rod_z/2}" effort="10.0" velocity="1.0" />
+  </joint>
+
+  <!-- Lidar Main Body -->
+  <link name="lidar_body">
+    <visual>
+      <geometry>
+        <box size="${lidar_x} ${lidar_y} ${lidar_z}" />
+      </geometry>
+      <material name="red" />
+    </visual>
+
+    <collision>
+      <geometry>
+        <box size="${lidar_x} ${lidar_y} ${lidar_z}" />
+      </geometry>
+    </collision>
+
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="${sensor_mass}"/>
+      <inertia 
+        ixx="${(1/12)*sensor_mass*(lidar_y*lidar_y + lidar_z*lidar_z)}" 
+        ixy="0" 
+        ixz="0" 
+        iyy="${(1/12)*sensor_mass*(lidar_x*lidar_x + lidar_z*lidar_z)}"  
+        iyz="0" 
+        izz="${(1/12)*sensor_mass*(lidar_x*lidar_x + lidar_y*lidar_y)}"
+      />
+    </inertial>
+  </link>
+
+  <joint name="rod_to_lidar" type="revolute">
+    <parent link="rod" />
+    <child link="lidar_body" />
+    <origin xyz="0 0 ${rod_z/2 - lidar_z/4}" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="${-3*PI/4}" upper="${3*PI/4}" effort="10.0" velocity="1.0" />
+  </joint>
+
+  <!-- Camera sensor -->
+  <link name="camera_link">
+    <visual>
+      <geometry>
+        <box size="0.05 0.05 0.05" />
+      </geometry>
+      <material name="black" />
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.05 0.05 0.05" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.01" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+
+  <joint name="camera_joint" type="fixed">
+    <parent link="lidar_body" />
+    <child link="camera_link" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+
+  <!-- Include Gazebo extensions -->
+  <xacro:include filename="robot.gazebo.xacro" />
+
+</robot>
