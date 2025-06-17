@@ -2,37 +2,37 @@
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="simple_box_bot_gazebo">
 
   <!-- ========== GAZEBO EXTENSIONS ========== -->
-  <!-- Gazebo plugin for ROS 2 Humble -->
+  <!-- Required sensors system plugin -->
   <gazebo>
-    <plugin filename="libgazebo_ros_diff_drive.so" name="differential_drive_controller">
-      <ros>
-        <namespace>/</namespace>
-        <remapping>cmd_vel:=cmd_vel</remapping>
-      </ros>
+    <plugin filename="libignition-gazebo-sensors-system.so" name="ignition::gazebo::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+  </gazebo>
+
+  <!-- Differential Drive Plugin (unchanged, already correct) -->
+  <gazebo>
+    <plugin filename="libignition-gazebo-diff-drive-system.so" name="ignition::gazebo::systems::DiffDrive">
       <left_joint>body_to_lf_wheel</left_joint>
       <left_joint>body_to_lb_wheel</left_joint>
       <right_joint>body_to_rf_wheel</right_joint>
       <right_joint>body_to_rb_wheel</right_joint>
       <wheel_separation>${body_y - 2*wheel_len}</wheel_separation>
-      <wheel_diameter>${2*wheel_radius}</wheel_diameter>
-      <max_wheel_torque>20</max_wheel_torque>
-      <max_wheel_acceleration>1.0</max_wheel_acceleration>
-      <command_topic>cmd_vel</command_topic>
-      <odometry_topic>odom</odometry_topic>
-      <odometry_frame>odom</odometry_frame>
+      <wheel_radius>${wheel_radius}</wheel_radius>
+      <odom_publish_frequency>50</odom_publish_frequency>
+      <topic>cmd_vel</topic>
+      <odom_topic>odom</odom_topic>
+      <odom_frame>odom</odom_frame>
       <robot_base_frame>base_link</robot_base_frame>
-      <publish_odom>true</publish_odom>
-      <publish_odom_tf>true</publish_odom_tf>
-      <publish_wheel_tf>false</publish_wheel_tf>
     </plugin>
   </gazebo>
 
-  <!-- Gazebo plugin for the lidar -->
+  <!-- GPU LIDAR (updated for Ignition Gazebo) -->
   <gazebo reference="lidar_body">
-    <sensor type="ray" name="lidar_sensor">
+    <sensor name="gpu_lidar" type="gpu_lidar">
       <pose>0 0 0 0 0 0</pose>
       <visualize>false</visualize>
       <update_rate>10</update_rate>
+      <topic>scan</topic>
       <ray>
         <scan>
           <horizontal>
@@ -53,20 +53,18 @@
           <stddev>0.01</stddev>
         </noise>
       </ray>
-      <plugin filename="libgazebo_ros_ray_sensor.so" name="lidar_controller">
-        <ros>
-          <namespace>/</namespace>
-          <remapping>scan:=scan</remapping>
-        </ros>
+      <plugin 
+        filename="libignition-gazebo-gpu-lidar-system.so" 
+        name="ignition::gazebo::systems::GpuLidar">
+        <topic>scan</topic>
         <frame_name>lidar_body</frame_name>
-        <topic_name>scan</topic_name>
       </plugin>
     </sensor>
   </gazebo>
 
-  <!-- Camera sensor -->
+  <!-- Camera (updated plugin syntax) -->
   <gazebo reference="camera_link">
-    <sensor type="camera" name="camera_sensor">
+    <sensor name="camera_sensor" type="camera">
       <pose>0 0 0 0 0 0</pose>
       <camera name="camera">
         <horizontal_fov>1.0472</horizontal_fov>
@@ -85,44 +83,34 @@
           <stddev>0.007</stddev>
         </noise>
       </camera>
-      <plugin filename="libgazebo_ros_camera.so" name="camera_controller">
-        <ros>
-          <namespace>/</namespace>
-          <remapping>image_raw:=camera/image_raw</remapping>
-          <remapping>camera_info:=camera/camera_info</remapping>
-        </ros>
-        <camera_name>camera</camera_name>
+      <plugin 
+        filename="libignition-gazebo-camera-system.so" 
+        name="ignition::gazebo::systems::Camera">
+        <topic>camera/image</topic>
         <frame_name>camera_link</frame_name>
-        <hack_baseline>0.07</hack_baseline>
       </plugin>
     </sensor>
   </gazebo>
 
-  <!-- Gazebo material for links -->
+  <!-- Gazebo materials (unchanged) -->
   <gazebo reference="base_link">
     <material>Gazebo/Green</material>
   </gazebo>
-  
   <gazebo reference="rod">
     <material>Gazebo/White</material>
   </gazebo>
-  
   <gazebo reference="lidar_body">
     <material>Gazebo/Red</material>
   </gazebo>
-  
   <gazebo reference="rf_wheel">
     <material>Gazebo/Blue</material>
   </gazebo>
-  
   <gazebo reference="rb_wheel">
     <material>Gazebo/Blue</material>
   </gazebo>
-  
   <gazebo reference="lf_wheel">
     <material>Gazebo/Blue</material>
   </gazebo>
-  
   <gazebo reference="lb_wheel">
     <material>Gazebo/Blue</material>
   </gazebo>

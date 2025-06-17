@@ -31,7 +31,7 @@ class ObstacleAvoidanceNode(Node):
     def scan_callback(self, msg: LaserScan):
         front_ranges = []
 
-        angle_range_deg = 10
+        angle_range_deg = 60
         angle_increment_deg = msg.angle_increment*180/math.pi
         center_index = len(msg.ranges) // 2
         index_range = int(angle_range_deg / angle_increment_deg)
@@ -51,6 +51,7 @@ class ObstacleAvoidanceNode(Node):
 
         if min_distance < self.safe_distance :
             twist.linear.x = 0.0
+            twist.angular.z = 0.5
             self.get_logger().warn("Obstacle too close warning")
         elif min_distance < self.slow_distance:
             twist.linear.x = 0.1

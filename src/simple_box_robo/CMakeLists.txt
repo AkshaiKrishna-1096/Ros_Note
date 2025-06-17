@@ -12,9 +12,15 @@ find_package(rclpy REQUIRED)
 install(DIRECTORY 
   launch 
   worlds 
-  urdf 
+  model
   rviz
   DESTINATION share/${PROJECT_NAME}
+)
+
+# Install Python nodes
+install(PROGRAMS
+  src/obstacle_avoidance_node.py
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)
