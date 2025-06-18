@@ -2,9 +2,8 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.substitutions import Command
-from launch.actions import ExecuteProcess, IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 
 def generate_launch_description():
     # Path to your URDF file
@@ -22,9 +21,10 @@ def generate_launch_description():
     )
 
     # Generate URDF from xacro
-    robot_description = Command([
-        'xacro ', urdf_file
-    ])
+    robot_description = ParameterValue(
+        Command(['xacro ', urdf_file]),
+        value_type=str
+    )
 
     return LaunchDescription([
         # Robot State Publisher
@@ -36,7 +36,8 @@ def generate_launch_description():
             output='screen',
             parameters=[{
                 'robot_description': robot_description,
-                'publish_frequency': 30.0  # Add this line
+                'publish_frequency': 30.0,
+                'use_sim_time': True  # Add this line
             }],
         ),
 
@@ -48,6 +49,14 @@ def generate_launch_description():
             output='screen',
         ),
 
+        Node(
+            package='joint_state_publisher',
+            executable='joint_state_publisher',
+            name='joint_state_publisher',
+            output='screen',
+            parameters=[{'use_sim_time': True}]
+        ),
+
         # RViz2
         Node(
             package='rviz2',
@@ -55,5 +64,5 @@ def generate_launch_description():
             name='rviz2',
             output='screen',
             arguments=['-d', rviz_config],
-        ),
+        )
     ])

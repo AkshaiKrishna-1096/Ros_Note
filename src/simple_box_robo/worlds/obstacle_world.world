@@ -60,7 +60,7 @@
     <!-- Wall 1 (horizontal) -->
     <model name="wall_1">
       <static>true</static>
-      <pose>2 2 0.5 0 0 0</pose>
+      <pose>2 3 0.5 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry>
@@ -104,7 +104,7 @@
     <!-- Wall 3 (vertical) -->
     <model name="wall_3">
       <static>true</static>
-      <pose>0 0 0.5 0 0 1.5708</pose>
+      <pose>1.7 0 0.5 0 0 1.5708</pose>
       <link name="link">
         <collision name="collision">
           <geometry>

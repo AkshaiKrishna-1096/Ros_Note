@@ -67,25 +67,18 @@ def generate_launch_description():
             output='screen'
         ),
 
-        # ROS-Ignition Bridge (only for odometry and TF)
-        Node(
-            package='ros_ign_bridge',
-            executable='parameter_bridge',
-            arguments=[
-                '/odom@nav_msgs/msg/Odometry@ignition.msgs.Odometry',
-                '/tf@tf2_msgs/msg/TFMessage@ignition.msgs.Pose_V'
-            ],
-            output='screen'
-        ),
-
         # Add LiDAR bridge
         Node(
             package='ros_ign_bridge',
             executable='parameter_bridge',
             arguments=[
+                '/camera/image_raw@sensor_msgs/msg/Image@ignition.msgs.Image',
+                '/cmd_vel@geometry_msgs/msg/Twist@ignition.msgs.Twist',
+                '/keyboard_cmd@geometry_msgs/msg/Twist@ignition.msgs.Twist',  # Add this line
                 '/lidar@sensor_msgs/msg/LaserScan@ignition.msgs.LaserScan',
                 '/odom@nav_msgs/msg/Odometry@ignition.msgs.Odometry',
-                '/tf@tf2_msgs/msg/TFMessage@ignition.msgs.Pose_V'
+                '/tf@tf2_msgs/msg/TFMessage@ignition.msgs.Pose_V',
+                '/world/empty/model/simple_box_robo/joint_state@sensor_msgs/msg/JointState@ignition.msgs.Model'
             ],
             output='screen'
         ),
