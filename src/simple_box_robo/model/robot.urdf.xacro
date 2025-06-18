@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="simple_box_bot">
   <!-- Add ROS 2 Control Import -->
-  <xacro:include filename="ros2_control.urdf.xacro" />
 
   <!-- ========== PROPERTIES ========== -->
   <!-- Dimension of the body -->
@@ -72,8 +71,6 @@
     </inertial>
   </xacro:macro>
 
-  <!-- ROS 2 Control Configuration (replace existing block) -->
-  <xacro:ros2_control name="diff_drive_controller" prefix="" />
 
   <!-- Add this at the top of your URDF, before base_link -->
   <link name="dummy">
@@ -141,7 +138,7 @@
   <joint name="body_to_rf_wheel" type="continuous">
     <parent link="base_link" />
     <child link="rf_wheel" />
-    <origin xyz="${body_x/2 - 1.2*wheel_radius} ${-body_y/2 + wheel_len} ${wheel_z}" rpy="0 0 0" />
+    <origin xyz="${body_x/2 - 1.2*wheel_radius} ${-body_y/2} ${wheel_z}" rpy="0 0 0" />
     <axis xyz="0 1 0" />
   </joint>
 
@@ -168,7 +165,7 @@
   <joint name="body_to_rb_wheel" type="continuous">
     <parent link="base_link" />
     <child link="rb_wheel" />
-    <origin xyz="${-body_x/2 + 1.2*wheel_radius} ${-body_y/2 + wheel_len} ${wheel_z}" rpy="0 0 0" />
+    <origin xyz="${-body_x/2 + 1.2*wheel_radius} ${-body_y/2} ${wheel_z}" rpy="0 0 0" />
     <axis xyz="0 1 0" />
   </joint>
 
@@ -195,7 +192,7 @@
   <joint name="body_to_lf_wheel" type="continuous">
     <parent link="base_link" />
     <child link="lf_wheel" />
-    <origin xyz="${body_x/2 - 1.2*wheel_radius} ${body_y/2 - wheel_len} ${wheel_z}" rpy="0 0 0" />
+    <origin xyz="${body_x/2 - 1.2*wheel_radius} ${body_y/2} ${wheel_z}" rpy="0 0 0" />
     <axis xyz="0 1 0" />
   </joint>
 
@@ -222,7 +219,7 @@
   <joint name="body_to_lb_wheel" type="continuous">
     <parent link="base_link" />
     <child link="lb_wheel" />
-    <origin xyz="${-body_x/2 + 1.2*wheel_radius} ${body_y/2 - wheel_len} ${wheel_z}" rpy="0 0 0" />
+    <origin xyz="${-body_x/2 + 1.2*wheel_radius} ${body_y/2} ${wheel_z}" rpy="0 0 0" />
     <axis xyz="0 1 0" />
   </joint>
 
@@ -256,12 +253,11 @@
     </inertial>
   </link>
 
-  <joint name="body_to_rod" type="prismatic">
+  <joint name="body_to_rod" type="fixed">
     <parent link="base_link" />
     <child link="rod" />
     <origin xyz="${body_x/2 - lidar_x} 0 ${body_z + wheel_radius}" rpy="0 0 0" />
     <axis xyz="0 0 1" />
-    <limit lower="${body_z + wheel_radius}" upper="${body_z + wheel_radius + rod_z/2}" effort="10.0" velocity="1.0" />
   </joint>
 
   <!-- Lidar Main Body -->
