@@ -257,7 +257,6 @@
     <parent link="base_link" />
     <child link="rod" />
     <origin xyz="${body_x/2 - lidar_x} 0 ${body_z + wheel_radius}" rpy="0 0 0" />
-    <axis xyz="0 0 1" />
   </joint>
 
   <!-- Lidar Main Body -->

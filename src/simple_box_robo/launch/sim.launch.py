@@ -43,6 +43,15 @@ def generate_launch_description():
             parameters=[robot_description],
         ),
 
+        # Joint State Publisher
+        Node(
+            package='joint_state_publisher',
+            executable='joint_state_publisher',
+            name='joint_state_publisher',
+            output='screen',
+            parameters=[{'use_sim_time': True}]
+        ),
+
         # Spawn the robot
         Node(
             package='ros_ign_gazebo',
@@ -67,6 +76,28 @@ def generate_launch_description():
                 '/tf@tf2_msgs/msg/TFMessage@ignition.msgs.Pose_V'
             ],
             output='screen'
+        ),
+
+        # Add LiDAR bridge
+        Node(
+            package='ros_ign_bridge',
+            executable='parameter_bridge',
+            arguments=[
+                '/lidar@sensor_msgs/msg/LaserScan@ignition.msgs.LaserScan',
+                '/odom@nav_msgs/msg/Odometry@ignition.msgs.Odometry',
+                '/tf@tf2_msgs/msg/TFMessage@ignition.msgs.Pose_V'
+            ],
+            output='screen'
+        ),
+
+        # Add Obstacle Avoidance Node
+        Node(
+            package='simple_box_robo',
+            executable='obstacle_avoidance_node.py',
+            output='screen',
+            remappings=[
+                ('/scan', '/lidar')
+            ]
         )
 
     ])

@@ -1,6 +1,13 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="simple_box_bot_gazebo">
 
+  <!-- Sensors System Plugin (MUST be top-level) -->
+
+  <!-- Joint State Publisher -->
+  <plugin filename="libignition-gazebo-joint-state-publisher-system.so"
+          name="ignition::gazebo::systems::JointStatePublisher">
+  </plugin>
+
   <!-- Differential Drive Plugin -->
   <gazebo>
     <plugin filename="libignition-gazebo-diff-drive-system.so" name="ignition::gazebo::systems::DiffDrive">
@@ -49,7 +56,7 @@
         <match field="data">16777234</match>
       </input>
       <output type="ignition.msgs.Twist" topic="/cmd_vel">
-        linear: {x: 0.0}, angular: {z: 1.0}
+        linear: {x: 0.0}, angular: {z: 1.5}
       </output>
     </plugin>
 
@@ -60,7 +67,7 @@
         <match field="data">16777236</match>
       </input>
       <output type="ignition.msgs.Twist" topic="/cmd_vel">
-        linear: {x: 0.0}, angular: {z: -1.0}
+        linear: {x: 0.0}, angular: {z: -1.5}
       </output>
     </plugin>
 
@@ -76,6 +83,47 @@
     </plugin>
 
   </gazebo>
+
+  <!-- ROS-Ignition Bridge for LiDAR -->
+  
+
+  <!-- LiDAR Sensor -->
+  <gazebo reference="lidar_body">
+    <sensor name="lidar_sensor" type="gpu_lidar">
+      <pose>0 0 0 0 0 0</pose>
+      <topic>lidar</topic>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>640</samples>
+            <resolution>1</resolution>
+            <min_angle>-1.396263</min_angle>  <!-- ~-80° -->
+            <max_angle>1.396263</max_angle>    <!-- ~80° -->
+          </horizontal>
+          <vertical>
+            <samples>1</samples>
+            <resolution>0.01</resolution>
+            <min_angle>0</min_angle>
+            <max_angle>0</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.08</min>
+          <max>10.0</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+      <plugin filename="libignition-gazebo-sensors-system.so"
+          name="ignition::gazebo::systems::Sensors">
+        <render_engine>ogre2</render_engine>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+
 
   <!-- Wheel Physics -->
   <gazebo reference="rf_wheel">
